@@ -1,35 +1,44 @@
-# Codo Eletiva
+# Codo Eletiva — API de cadastro e vendas
 
-API de demonstração para cadastro e gerenciamento de usuários, categorias, produtos, clientes e vendas usando Express, TypeScript, TypeORM e PostgreSQL.
+API de estudo para gerenciar usuários, categorias, produtos, clientes e vendas. Construída com Express, TypeScript, TypeORM e PostgreSQL.
 
 ## Requisitos
 
-- Node.js compatível com TypeScript 4
-- PostgreSQL
+- Node.js compatível com o TypeScript 4 usado pelo projeto
 - Yarn
+- PostgreSQL
 
-## Configuração
+## Configuração local
 
-Defina as variáveis de ambiente antes de iniciar a aplicação ou executar migrations:
+1. Crie um banco PostgreSQL local.
+2. Configure as variáveis abaixo no ambiente do terminal ou em um arquivo .env local (não o envie ao Git):
 
-```text
+~~~env
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=sua-senha-local
 DB_DATABASE=newApp
 JWT_SECRET=gere-um-segredo-aleatorio-longo
-```
+~~~
 
-Não reutilize credenciais que tenham sido expostas anteriormente. Não versione arquivos de ambiente.
+3. Instale dependências e inicie:
 
-```sh
+~~~sh
 yarn install
 yarn dev
-```
+~~~
 
-A API inicia na porta 3000. O esquema é gerenciado por migrations em `src/database/migrations`; mantenha `synchronize: false`.
+A API escuta na porta 3000. Confirme as rotas implementadas em src/routes e use http://localhost:3000 como base local. O projeto possui migrations em src/database/migrations; execute-as com TypeORM antes de testar rotas que dependam do esquema:
 
-## Estado e limitações
+~~~sh
+yarn typeorm migration:run
+~~~
 
-Este é um projeto de estudo. Antes de uso real, adicionar testes, validação de entrada, autorização por papel verificada no banco e configuração de CORS/rate limiting. O middleware de administrador deve ser coberto por testes de autorização.
+## Testes
+
+Não há script test no package.json, portanto yarn test não está configurado. Verificação manual básica: inicie a API, consulte uma rota existente e valide uma operação CRUD com dados descartáveis no banco local. Adicione testes automatizados antes de confiar em mudanças de autenticação, autorização, validação ou persistência.
+
+## Limitações conhecidas
+
+Projeto de estudo, não pronto para produção. Antes de uso real, implemente testes, validação de entrada, autorização por papel validada no banco, CORS e rate limiting. Não reutilize nem versione credenciais reais.
