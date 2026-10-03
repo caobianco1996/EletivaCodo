@@ -10,27 +10,22 @@ export function ensureAuthenticated(
   response: Response,
   next: NextFunction
 ) {
-  // Receber o token
   const authToken = request.headers.authorization;
+  const secret = process.env.JWT_SECRET;
 
-  // Validar se token está preenchido
-  if (!authToken) {
+  if (!authToken || !secret) {
     return response.status(401).end();
   }
 
-  const [, token] = authToken.split(" ");
-  console.log("Não autorizado, sem token");
+  const [scheme, token] = authToken.split(" ");
+  if (scheme !== "Bearer" || !token) {
+    return response.status(401).end();
+  }
+
   try {
-    // Validar se token é válido
-    const { sub } = verify(
-      token,
-      "4f93ac9d10cb751b8c9c646bc9dbccb9"
-    ) as IPayload;
-
-    //request.user_id = sub;
-
+    verify(token, secret) as IPayload;
     return next();
-  } catch (err) {
+  } catch {
     return response.status(401).end();
   }
 }
