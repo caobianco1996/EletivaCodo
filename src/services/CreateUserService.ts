@@ -1,39 +1,38 @@
 import { hash } from "bcryptjs";
 import { getCustomRepository } from "typeorm";
 import { UsersRepositories } from "../repositories/UsersRepositories";
+
 interface IUserRequest {
   name: string;
   email: string;
-  admin?: boolean;
   password: string;
 }
+
 class CreateUserService {
-  async execute({ name, email, admin = false, password }: IUserRequest) {
+  async execute({ name, email, password }: IUserRequest) {
     const usersRepository = getCustomRepository(UsersRepositories);
-    if (!email) {
-      throw new Error("Email obrigatorio");
+    const normalizedEmail = email?.trim().toLowerCase();
+
+    if (!normalizedEmail) throw new Error("Email obrigatório");
+    if (!name?.trim()) throw new Error("Nome obrigatório");
+    if (!password || password.length < 8) {
+      throw new Error("A senha deve ter pelo menos 8 caracteres");
     }
-    if (!name) {
-      throw new Error("Nome obrigatorio");
-    }
-    if (!password) {
-      throw new Error("Password Obrigatorio");
-    }
-    const userAlreadyExists = await usersRepository.findOne({
-      email,
-    });
-    if (userAlreadyExists) {
-      throw new Error("User already exists");
-    }
-    const passwordHash = await hash(password, 8);
+
+    const userAlreadyExists = await usersRepository.findOne({ email: normalizedEmail });
+    if (userAlreadyExists) throw new Error("Usuário já existe");
+
+    const passwordHash = await hash(password, 12);
     const user = usersRepository.create({
-      name,
-      email,
-      admin,
+      name: name.trim(),
+      email: normalizedEmail,
+      admin: false,
       password: passwordHash,
     });
     await usersRepository.save(user);
-    return user;
+
+    return { id: user.id, name: user.name, email: user.email };
   }
 }
+
 export { CreateUserService };
