@@ -29,7 +29,7 @@ yarn install
 yarn dev
 ~~~
 
-A API escuta na porta 3000. Confirme as rotas implementadas em src/routes e use http://localhost:3000 como base local. O projeto possui migrations em src/database/migrations; execute-as com TypeORM antes de testar rotas que dependam do esquema:
+A API usa a porta 3000 por padrão; configure PORT para escolher outra. O endpoint GET http://localhost:3000/health retorna o estado básico do servidor. Consulte src/routes.ts para as rotas CRUD. O projeto possui migrations em src/database/migrations; execute-as antes de usar rotas que dependam do esquema:
 
 ~~~sh
 yarn typeorm migration:run
@@ -37,8 +37,8 @@ yarn typeorm migration:run
 
 ## Testes
 
-Não há script test no package.json, portanto yarn test não está configurado. Verificação manual básica: inicie a API, consulte uma rota existente e valide uma operação CRUD com dados descartáveis no banco local. Adicione testes automatizados antes de confiar em mudanças de autenticação, autorização, validação ou persistência.
+Não há script test no package.json, portanto yarn test não está configurado. Verificação manual básica: consulte /health, valide uma operação CRUD com dados descartáveis no banco local e confira a resposta de erro ao enviar uma entrada inválida. Adicione testes automatizados para autenticação, autorização e persistência antes de confiar em mudanças nessas áreas.
 
 ## Limitações conhecidas
 
-Projeto de estudo, não pronto para produção. Antes de uso real, implemente testes, validação de entrada, autorização por papel validada no banco, CORS e rate limiting. Não reutilize nem versione credenciais reais.
+Projeto de estudo, não pronto para produção. Antes de uso real, implemente validação de entrada, autorização por papel validada no banco, CORS com origem restrita e rate limiting. Não reutilize nem versione credenciais reais.
